@@ -266,6 +266,10 @@ def edit_recipe(recipe_id):
             recipe = session.query(Recipe).filter(Recipe.id == recipe_id).first()
 
         image = request.files["photo"]
+        
+        if not image:
+            return render_template('add_recipe.html', title='Добавление рецепта',
+                                   form=form, message='Добавьте картинку')
 
         # Проверка того, что у картинки есть имя
         if image.filename == '':
