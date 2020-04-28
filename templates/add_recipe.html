@@ -61,8 +61,13 @@
         {% endfor %}
     </p>
     <p>
-        <input type="file" id="photo" name="photo">
-        <label for="photo">Выберите фото</label>
+        {% if param %}
+            <input type="file" id="photo" name="photo" value="{{ param['about'] }}">
+            <label for="photo">Выберите фото</label>
+        {% else %}
+            <input type="file" id="photo" name="photo">
+            <label for="photo">Выберите фото</label>
+        {% endif %}
         {% for error in form.photo.errors %}
             <p class="alert alert-danger" role="alert">
                 {{ error }}
