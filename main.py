@@ -287,6 +287,21 @@ def edit_recipe(recipe_id):
             recipe.steps = form.steps.data
             recipe.photo = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
             recipe.about = form.about.data
+              
+            # Удаление пустых строк из списка шагов
+            steps = recipe.steps.split('\n')
+            for i in range(len(steps) - 1, -1, -1):
+                if steps[i] == '' or steps[i] == '\r':
+                    steps.remove(steps[i])
+            recipe.steps = '\n'.join(steps)
+
+            # Удаление пустых строк из списка ингредиентов
+            ingredients = recipe.ingredients.split('\n')
+            for i in range(len(ingredients) - 1, -1, -1):
+                if ingredients[i] == '' or ingredients[i] == '\r':
+                    ingredients.remove(ingredients[i])
+            recipe.ingredients = '\n'.join(ingredients)
+              
             session.commit()
             return redirect(f'/user/{current_user.id}')
         else:
