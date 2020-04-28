@@ -132,7 +132,8 @@ def login():
             login_user(user)
             return redirect("/home")
         return render_template('login.html',
-                               form=form)
+                               form=form,
+                               message="Неправильный логин или пароль")
     return render_template('login.html', form=form)
 
 
