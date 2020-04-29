@@ -8,6 +8,10 @@ h1{
     padding-bottom: 50px;
 }
 
+.message {
+    text-align: center;
+}
+
 h2:hover {
     opacity: 1;
 }
