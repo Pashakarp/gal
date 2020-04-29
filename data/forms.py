@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileRequired, FileAllowed
 from wtforms import PasswordField, IntegerField, SubmitField, StringField, FileField, TextAreaField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
@@ -24,6 +25,6 @@ class AddRecipeForm(FlaskForm):
     title = StringField('Recipe title', validators=[DataRequired()])
     ingredients = TextAreaField('Ingredients', validators=[DataRequired()])
     steps = TextAreaField('Steps', validators=[DataRequired()])
-    photo = FileField('Photo', validators=[DataRequired()])
+    photo = FileField('Photo', validators=[FileRequired(), FileAllowed(['jpg', 'png'])])
     about = TextAreaField('About')
     submit = SubmitField('Создать рецепт')
