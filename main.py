@@ -257,19 +257,29 @@ def edit_recipe(recipe_id):
         else:
             abort(404)
 
-    if form.validate_on_submit():
+    if request.method == 'POST':
         session = db_session.create_session()
+        param = session.query(Recipe).filter(Recipe.id == recipe_id).first()
+        d = {'title': param.title,
+             'ingredients': param.ingredients,
+             'steps': param.steps,
+             'about': param.about}
+
         if current_user.id != 1:
             recipe = session.query(Recipe).filter(Recipe.id == recipe_id,
                                                   Recipe.user == current_user).first()
         else:
             recipe = session.query(Recipe).filter(Recipe.id == recipe_id).first()
 
-        image = request.files["photo"]
-        
+        try:
+            image = request.files["photo"]
+        except Exception:
+            return render_template('add_recipe.html', title='Добавление рецепта',
+                                   form=form, message='Нет картинки')
+
         if not image:
             return render_template('add_recipe.html', title='Добавление рецепта',
-                                   form=form, message='Добавьте картинку')
+                                   form=form, message='Нет картинки')
 
         # Проверка того, что у картинки есть имя
         if image.filename == '':
@@ -282,7 +292,11 @@ def edit_recipe(recipe_id):
                                    form=form, message='Доступные форматы файлов: PNG, JPG, JPEG')
 
         # Сохранение картинки в определенную директорию
-        image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+        try:
+            image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+        except Exception:
+            return render_template('add_recipe.html', title='Добавление рецепта',
+                                   form=form, message='Нет картинки')
         print(f'Картинка сохранена сюда: {os.path.join(app.config["IMAGE_UPLOADS"], image.filename)}')
 
         # На всякий случай еще раз меняем значения и подтверждаем
@@ -292,7 +306,7 @@ def edit_recipe(recipe_id):
             recipe.steps = form.steps.data
             recipe.photo = os.path.join(app.config["IMAGE_UPLOADS"], image.filename)
             recipe.about = form.about.data
-              
+
             # Удаление пустых строк из списка шагов
             steps = recipe.steps.split('\n')
             for i in range(len(steps) - 1, -1, -1):
@@ -306,7 +320,7 @@ def edit_recipe(recipe_id):
                 if ingredients[i] == '' or ingredients[i] == '\r':
                     ingredients.remove(ingredients[i])
             recipe.ingredients = '\n'.join(ingredients)
-              
+
             session.commit()
             return redirect(f'/user/{current_user.id}')
         else:
