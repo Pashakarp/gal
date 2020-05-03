@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, request, abort
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from data import db_session
 import os
+from data import recipes_api
 
 # Импорт форм из файла со всеми формами
 from data.forms import AddRecipeForm, LoginForm, RegisterForm
@@ -28,6 +29,7 @@ def allowed_image(filename):
 
 
 db_session.global_init("db/galleta.sqlite")
+app.register_blueprint(recipes_api.blueprint)
 
 
 @app.route('/')
